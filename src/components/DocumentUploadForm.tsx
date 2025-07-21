@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { Progress } from '@/components/ui/progress';
-import { CheckCircle, FileText, Users, Building2, Image } from 'lucide-react';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { CheckCircle, FileText, Users, Building2, Image, ChevronDown, ChevronUp } from 'lucide-react';
 import FileUploadSection from './DocumentUpload';
 import { useToast } from '@/hooks/use-toast';
 
@@ -29,6 +30,9 @@ const DocumentUploadForm: React.FC = () => {
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [personalOpen, setPersonalOpen] = useState(true);
+  const [businessOpen, setBusinessOpen] = useState(true);
+  const [brandingOpen, setBrandingOpen] = useState(true);
   const { toast } = useToast();
 
   const updateFormData = (section: keyof FormData, files: UploadedFile[]) => {
@@ -50,6 +54,12 @@ const DocumentUploadForm: React.FC = () => {
     return formData.nationalId.length > 0 && 
            formData.commercialRegistration.length > 0 && 
            formData.taxCertificate.length > 0;
+  };
+
+  const handleCollapseAll = () => {
+    setPersonalOpen(false);
+    setBusinessOpen(false);
+    setBrandingOpen(false);
   };
 
   const handleSubmit = async () => {
@@ -133,68 +143,126 @@ const DocumentUploadForm: React.FC = () => {
         </CardContent>
       </Card>
 
+      {/* Collapse All Button */}
+      <div className="flex justify-end">
+        <Button 
+          variant="outline" 
+          onClick={handleCollapseAll}
+          className="flex items-center gap-2"
+        >
+          <ChevronUp className="h-4 w-4" />
+          Collapse All Sections
+        </Button>
+      </div>
+
       {/* Upload Sections */}
       <div className="space-y-6">
-        {/* National ID */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 mb-2">
-            <Users className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Personal Documents</h3>
-          </div>
-          <FileUploadSection
-            title="Upload your National ID"
-            description="Please upload clear images or PDFs of your national identification documents (front/back if applicable)"
-            acceptedTypes={['PDF', 'JPG', 'PNG']}
-            maxFiles={5}
-            onFilesChange={(files) => updateFormData('nationalId', files)}
-          />
-        </div>
+        {/* Personal Documents Section */}
+        <Collapsible open={personalOpen} onOpenChange={setPersonalOpen}>
+          <Card className="border-2 border-primary/20">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Users className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg font-semibold text-foreground">Personal Documents</CardTitle>
+                  </div>
+                  {personalOpen ? (
+                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="space-y-4">
+                <FileUploadSection
+                  title="Upload your National ID"
+                  description="Please upload clear images or PDFs of your national identification documents (front/back if applicable)"
+                  acceptedTypes={['PDF', 'JPG', 'PNG']}
+                  maxFiles={5}
+                  onFilesChange={(files) => updateFormData('nationalId', files)}
+                />
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
 
-        <Separator className="my-8" />
+        {/* Business Documents Section */}
+        <Collapsible open={businessOpen} onOpenChange={setBusinessOpen}>
+          <Card className="border-2 border-primary/20">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg font-semibold text-foreground">Business Documents</CardTitle>
+                  </div>
+                  {businessOpen ? (
+                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="space-y-6">
+                <FileUploadSection
+                  title="Upload your Commercial Registration Document"
+                  description="Upload your business registration certificates, commercial licenses, or related documents"
+                  acceptedTypes={['PDF', 'JPG', 'PNG']}
+                  maxFiles={5}
+                  onFilesChange={(files) => updateFormData('commercialRegistration', files)}
+                />
+                
+                <Separator className="my-4" />
+                
+                <FileUploadSection
+                  title="Upload your Tax Certificate"
+                  description="Please provide your tax registration certificates, tax ID documents, or related tax documents"
+                  acceptedTypes={['PDF', 'JPG', 'PNG']}
+                  maxFiles={5}
+                  onFilesChange={(files) => updateFormData('taxCertificate', files)}
+                />
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
 
-        {/* Business Documents */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-2 mb-2">
-            <Building2 className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Business Documents</h3>
-          </div>
-          
-          {/* Commercial Registration */}
-          <FileUploadSection
-            title="Upload your Commercial Registration Document"
-            description="Upload your business registration certificates, commercial licenses, or related documents"
-            acceptedTypes={['PDF', 'JPG', 'PNG']}
-            maxFiles={5}
-            onFilesChange={(files) => updateFormData('commercialRegistration', files)}
-          />
-
-          {/* Tax Certificate */}
-          <FileUploadSection
-            title="Upload your Tax Certificate"
-            description="Please provide your tax registration certificates, tax ID documents, or related tax documents"
-            acceptedTypes={['PDF', 'JPG', 'PNG']}
-            maxFiles={5}
-            onFilesChange={(files) => updateFormData('taxCertificate', files)}
-          />
-        </div>
-
-        <Separator className="my-8" />
-
-        {/* Company Logo */}
-        <div className="space-y-2">
-          <div className="flex items-center gap-2 mb-2">
-            <Image className="h-5 w-5 text-primary" />
-            <h3 className="text-lg font-semibold text-foreground">Branding (Optional)</h3>
-          </div>
-          <FileUploadSection
-            title="Upload your Company Logo"
-            description="Upload your company logos, brand assets, or marketing materials (optional)"
-            acceptedTypes={['JPG', 'PNG']}
-            isOptional={true}
-            maxFiles={3}
-            onFilesChange={(files) => updateFormData('companyLogo', files)}
-          />
-        </div>
+        {/* Branding Section */}
+        <Collapsible open={brandingOpen} onOpenChange={setBrandingOpen}>
+          <Card className="border-2 border-primary/20">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Image className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg font-semibold text-foreground">Branding (Optional)</CardTitle>
+                  </div>
+                  {brandingOpen ? (
+                    <ChevronUp className="h-5 w-5 text-muted-foreground" />
+                  ) : (
+                    <ChevronDown className="h-5 w-5 text-muted-foreground" />
+                  )}
+                </div>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="space-y-4">
+                <FileUploadSection
+                  title="Upload your Company Logo"
+                  description="Upload your company logos, brand assets, or marketing materials (optional)"
+                  acceptedTypes={['JPG', 'PNG']}
+                  isOptional={true}
+                  maxFiles={3}
+                  onFilesChange={(files) => updateFormData('companyLogo', files)}
+                />
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
       </div>
 
       {/* Submit Section */}
