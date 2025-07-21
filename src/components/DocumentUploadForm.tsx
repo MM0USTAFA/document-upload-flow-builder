@@ -114,19 +114,19 @@ const DocumentUploadForm: React.FC = () => {
             <div className="flex items-center justify-center gap-6 text-xs text-muted-foreground">
               <div className="flex items-center gap-1">
                 <div className={`w-2 h-2 rounded-full ${formData.nationalId.length > 0 ? 'bg-success' : 'bg-muted'} transition-colors duration-300`} />
-                National ID
+                National ID ({formData.nationalId.length}/5)
               </div>
               <div className="flex items-center gap-1">
                 <div className={`w-2 h-2 rounded-full ${formData.commercialRegistration.length > 0 ? 'bg-success' : 'bg-muted'} transition-colors duration-300`} />
-                Commercial Registration
+                Commercial Reg ({formData.commercialRegistration.length}/5)
               </div>
               <div className="flex items-center gap-1">
                 <div className={`w-2 h-2 rounded-full ${formData.taxCertificate.length > 0 ? 'bg-success' : 'bg-muted'} transition-colors duration-300`} />
-                Tax Certificate
+                Tax Cert ({formData.taxCertificate.length}/5)
               </div>
               <div className="flex items-center gap-1">
                 <div className={`w-2 h-2 rounded-full ${formData.companyLogo.length > 0 ? 'bg-primary' : 'bg-muted'} transition-colors duration-300`} />
-                Company Logo
+                Logo ({formData.companyLogo.length}/3)
               </div>
             </div>
           </div>
@@ -143,8 +143,9 @@ const DocumentUploadForm: React.FC = () => {
           </div>
           <FileUploadSection
             title="Upload your National ID"
-            description="Please upload a clear image or PDF of your national identification document"
+            description="Please upload clear images or PDFs of your national identification documents (front/back if applicable)"
             acceptedTypes={['PDF', 'JPG', 'PNG']}
+            maxFiles={5}
             onFilesChange={(files) => updateFormData('nationalId', files)}
           />
         </div>
@@ -161,16 +162,18 @@ const DocumentUploadForm: React.FC = () => {
           {/* Commercial Registration */}
           <FileUploadSection
             title="Upload your Commercial Registration Document"
-            description="Upload your business registration certificate or commercial license"
+            description="Upload your business registration certificates, commercial licenses, or related documents"
             acceptedTypes={['PDF', 'JPG', 'PNG']}
+            maxFiles={5}
             onFilesChange={(files) => updateFormData('commercialRegistration', files)}
           />
 
           {/* Tax Certificate */}
           <FileUploadSection
             title="Upload your Tax Certificate"
-            description="Please provide your tax registration certificate or tax ID document"
+            description="Please provide your tax registration certificates, tax ID documents, or related tax documents"
             acceptedTypes={['PDF', 'JPG', 'PNG']}
+            maxFiles={5}
             onFilesChange={(files) => updateFormData('taxCertificate', files)}
           />
         </div>
@@ -185,9 +188,10 @@ const DocumentUploadForm: React.FC = () => {
           </div>
           <FileUploadSection
             title="Upload your Company Logo"
-            description="Upload your company logo for branding purposes (optional)"
+            description="Upload your company logos, brand assets, or marketing materials (optional)"
             acceptedTypes={['JPG', 'PNG']}
             isOptional={true}
+            maxFiles={3}
             onFilesChange={(files) => updateFormData('companyLogo', files)}
           />
         </div>
